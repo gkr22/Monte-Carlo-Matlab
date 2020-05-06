@@ -1,0 +1,191 @@
+
+clear all
+close all 
+format compact
+
+%setting up game, initializing variables
+inning = [1;1];
+awayHits = 0;
+homeHits = 0;
+awayHitter = 0;
+homeHitter = 0;
+homeScore = 0;
+awayScore = 0;
+keepbatting = true;
+noout = true;
+away = 0;
+home = 0;
+
+%initializing in game statistics
+atBats = zeros(2,9);
+hits = zeros(2,9);
+
+%brewers 
+batsingle = [.150 .210 .230 .285 .301 .222 .175 .253 .189];
+batdouble = [.50 .65 .88 .75 .75 .32 .55 .25 .15];
+battriple = [.15 .20 .13 .18 .20 .22 .10 .12 .05];
+bathomerun = [.10 .12 .15 .15 .12 .10 .18 .05 .02];
+
+%yankees
+
+batsingle2 = [.150 .210 .230 .285 .301 .222 .175 .253 .189];
+batdouble2 = [.50 .65 .88 .75 .75 .32 .55 .25 .15];
+battriple2 = [.15 .20 .13 .18 .20 .22 .10 .12 .05];
+bathomerun2 = [.10 .12 .15 .15 .12 .10 .18 .05 .02];
+
+
+while keepbatting && noout 
+    
+    %declaring variables
+    outs = 0;    
+    firstBase=0;
+    secondBase=0;
+    thirdBase=0;
+    
+    if inning(2) == 1
+        team = away;
+        pitcher = home;
+    else
+        team = home;
+        pitcher = away;
+    end
+    
+    while outs < 3
+        
+        %specifying which batter is hitting based on inning
+        if inning(2) == 1
+            awayHitter = awayHitter + 1;
+            if awayHitter == 10
+                awayHitter = 1;
+            end
+            hitter = awayHitter;
+        elseif inning(2) == 2
+            homeHitter = homeHitter + 1;
+            if homeHitter == 10
+                homeHitter = 1;
+            end            
+            hitter = homeHitter;
+        end        
+        
+                %generating random number to decide outcome of at bat
+        abChance=rand(1);
+        
+        if abChance == 1;
+            %generating random number to decided outcome of hit
+            hitChance=rand(1);
+            
+            if inning(2) == 1
+                hits(1,hitter) = hits(1,hitter) + 1;
+                atBats(1,hitter) = atBats(1,hitter) + 1;
+            else
+                hits(2,hitter) = hits(2,hitter) + 1;
+                atBats(2,hitter) = atBats(2,hitter) + 1;
+            end
+            
+               %single
+            if hitChance <= batsingle
+                %moving runners and updating score accordingly
+                if thirdBase ~= 0 && inning(2) == 1
+                    awayScore = awayScore + 1;
+                elseif thirdBase ~= 0 && inning(2) ==2
+                    homeScore = homeScore + 1;
+                end
+                thirdBase = secondBase;
+                secondBase = firstBase;
+                firstBase = 1;
+                
+             
+            %double    
+            elseif hitChance >= batsingle & hitChance <= batdouble
+                %moving runners and updating score accordingly
+                if thirdBase ~= 0 && inning(2) == 1
+                    awayScore = awayScore + 1;
+                elseif thirdBase ~= 0 && inning(2) ==2
+                    homeScore = homeScore + 1;
+                end
+                if secondBase ~= 0 && inning(2) == 1
+                    awayScore = awayScore + 1;
+                elseif secondBase ~= 0 && inning(2) ==2
+                    homeScore = homeScore + 1;
+                end   
+                thirdBase = firstBase;
+                secondBase = 1;
+                firstBase = 0;
+               
+
+            %triple
+            elseif hitChance >= batdouble & hitChance <= battriple
+                %moving runners and updating score accordingly
+                if thirdBase ~= 0 && inning(2) == 1
+                    awayScore = awayScore + 1;
+                elseif thirdBase ~= 0 && inning(2) ==2
+                    homeScore = homeScore + 1;
+                end
+                if secondBase ~= 0 && inning(2) == 1
+                    awayScore = awayScore + 1;
+                elseif secondBase ~= 0 && inning(2) ==2
+                    homeScore = homeScore + 1; 
+                end
+                if firstBase ~= 0 && inning(2) == 1
+                    awayScore = awayScore + 1;
+                elseif firstBase ~= 0 && inning(2) ==2
+                    homeScore = homeScore + 1;  
+                end
+                thirdBase = 1;
+                secondBase = 0;
+                firstBase = 0;
+                
+                
+            %homer    
+            else
+                %moving runners and updating score accordingly
+                if thirdBase ~= 0 && inning(2) == 1
+                    awayScore = awayScore + 1;
+                elseif thirdBase ~= 0 && inning(2) ==2
+                    homeScore = homeScore + 1;
+                end
+                if secondBase ~= 0 && inning(2) == 1
+                    awayScore = awayScore + 1;
+                elseif secondBase ~= 0 && inning(2) ==2
+                    homeScore = homeScore + 1; 
+                end
+                if firstBase ~= 0 && inning(2) == 1
+                    awayScore = awayScore + 1;
+                elseif firstBase ~= 0 && inning(2) == 2
+                    homeScore = homeScore + 1; 
+                end
+                if inning(2) == 1
+                    awayScore = awayScore + 1;
+                elseif inning(2) == 2
+                    homeScore = homeScore + 1;
+                end               
+                thirdBase = 0;
+                secondBase = 0;
+                firstBase = 0;
+                if firstBase ~= 0 && secondBase ~= 0 && thirdBase ~= 0
+                                              
+                end
+            end
+            if inning(2) == 1 
+                awayHits = awayHits + 1;
+            else
+                homeHits = homeHits + 1;
+            end
+
+ 
+         
+            
+                         %out    
+        else
+            %update number of outs
+            outs=outs+1;
+            
+            if inning(2) == 1
+                atBats(1,hitter) = atBats(1,hitter) + 1;
+            else
+                atBats(2,hitter) = atBats(2,hitter) + 1;
+            end  
+            
+        end
+    end
+end
